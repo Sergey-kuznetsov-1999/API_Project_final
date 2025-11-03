@@ -7,4 +7,4 @@ class CheckAuthorize(BaseEndpointApi):
     def check_authorize(self, token: str):
         url = f"{self.url}/authorize/{token}"
         response = requests.get(url)
-        return response.status_code == 200
+        return response.status_code

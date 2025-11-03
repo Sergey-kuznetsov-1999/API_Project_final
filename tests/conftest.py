@@ -12,6 +12,11 @@ from endpoints.put_update_meme import PutUpdateMeme
 def get_check_authorize_endpoint():
     return CheckAuthorize()
 
+@pytest.fixture()
+def auth_token(get_check_authorize_endpoint):
+    auth_data = get_check_authorize_endpoint.authorize()
+    return auth_data["token"]
+
 
 @pytest.fixture()
 def get_check_meme_endpoint():
@@ -26,6 +31,11 @@ def get_check_meme_id_endpoint():
 @pytest.fixture()
 def post_create_meme_endpoint():
     return PostCreateMeme()
+
+@pytest.fixture()
+def created_id(auth_token, post_create_meme_endpoint):
+    created_data = post_create_meme_endpoint.create_meme_id(auth_token)
+    return created_data
 
 
 @pytest.fixture()

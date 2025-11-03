@@ -8,4 +8,4 @@ class CheckMeme(BaseEndpointApi):
          url = f"{self.url}/meme"
          headers = {"Authorization": token}
          response = requests.get(url, headers=headers)
-         return response.status_code == 200
+         return response.json()
