@@ -8,6 +8,7 @@ from endpoints.post_create_meme import PostCreateMeme
 from endpoints.put_update_meme import PutUpdateMeme
 
 
+
 @pytest.fixture()
 def get_check_authorize_endpoint():
     return CheckAuthorize()
@@ -33,9 +34,11 @@ def post_create_meme_endpoint():
     return PostCreateMeme()
 
 @pytest.fixture()
-def created_id(auth_token, post_create_meme_endpoint):
+def created_id(auth_token, post_create_meme_endpoint, delete_meme_endpoint):
     created_data = post_create_meme_endpoint.create_meme_id(auth_token)
-    return created_data
+    yield created_data
+    delete_meme_endpoint.delete_meme(auth_token, created_data)
+
 
 
 @pytest.fixture()
