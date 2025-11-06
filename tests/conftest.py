@@ -8,10 +8,10 @@ from endpoints.post_create_meme import PostCreateMeme
 from endpoints.put_update_meme import PutUpdateMeme
 
 
-
 @pytest.fixture()
 def get_check_authorize_endpoint():
     return CheckAuthorize()
+
 
 @pytest.fixture()
 def auth_token(get_check_authorize_endpoint):

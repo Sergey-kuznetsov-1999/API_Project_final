@@ -8,11 +8,11 @@ class PostCreateMeme(BaseEndpointApi):
 
         if data is None:
             data = {
-                    "text": "new meme",
-                    "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCAUrJkyCKZIY3UMh4SD4YpcBMgzCZBhF1UQ&s",
-                    "tags": ["cool", "happy"],
-                    "info": {"author": "noname", "color": "gray"}
-                }
+                "text": "new meme",
+                "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCAUrJkyCKZIY3UMh4SD4YpcBMgzCZBhF1UQ&s",
+                "tags": ["cool", "happy"],
+                "info": {"author": "noname", "color": "gray"}
+            }
         url = f"{self.url}/meme"
         self.response = requests.post(
             url,
@@ -26,7 +26,6 @@ class PostCreateMeme(BaseEndpointApi):
             return self.response.json()
         except:
             return self.status_code
-
 
     def create_meme_id(self, token=None):
         url = f"{self.url}/meme"

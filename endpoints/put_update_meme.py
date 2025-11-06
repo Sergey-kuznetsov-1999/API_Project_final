@@ -12,4 +12,3 @@ class PutUpdateMeme(BaseEndpointApi):
             json=update_data
         )
         return self.response
-
