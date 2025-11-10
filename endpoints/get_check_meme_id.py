@@ -7,5 +7,5 @@ class CheckMemeId(BaseEndpointApi):
     def check_meme_id(self, token=None, created_data=None):
         url = f"{self.url}/meme/{created_data}"
         headers = {"Authorization": token}
-        response = requests.get(url, headers=headers)
-        return response.status_code
+        self.response = requests.get(url, headers=headers)
+        self.status_code = self.response.status_code

@@ -1,40 +1,46 @@
 import pytest
 from endpoints.get_check_meme_id import CheckMemeId
+from tests.conftest import put_update_meme_endpoint
 
 
 def test_check_authorize(get_check_authorize_endpoint, auth_token):
-    status_code = get_check_authorize_endpoint.check_authorize(auth_token)
-    get_check_authorize_endpoint.check_status_code_endpoint(status_code, 200)
+    get_check_authorize_endpoint.check_authorize(auth_token)
+    get_check_authorize_endpoint.check_status_code_endpoint(200)
 
 
 def test_check_authorize_invalid(get_check_authorize_endpoint):
-    status_code = get_check_authorize_endpoint.check_authorize("invalid_token")
-    get_check_authorize_endpoint.check_status_code_endpoint(status_code, 404)
+    get_check_authorize_endpoint.check_authorize("invalid_token")
+    get_check_authorize_endpoint.check_status_code_endpoint(404)
 
 
 def test_check_authorize_non_token(get_check_authorize_endpoint):
-    status_code = get_check_authorize_endpoint.check_authorize('')
-    get_check_authorize_endpoint.check_status_code_endpoint(status_code, 404)
+    get_check_authorize_endpoint.check_authorize('')
+    get_check_authorize_endpoint.check_status_code_endpoint(404)
 
 
 def test_get_check_meme(auth_token, get_check_meme_endpoint):
-    status_code = get_check_meme_endpoint.check_meme(auth_token)
-    get_check_meme_endpoint.check_status_code_endpoint(status_code, 200)
+    get_check_meme_endpoint.check_meme(auth_token)
+    get_check_meme_endpoint.check_status_code_endpoint(200)
 
 
 def test_get_check_meme_id_correct(auth_token, created_id, get_check_meme_id_endpoint):
-    status_code = get_check_meme_id_endpoint.check_meme_id(auth_token, created_id)
-    get_check_meme_id_endpoint.check_status_code_endpoint(status_code, 200)
+    get_check_meme_id_endpoint.check_meme_id(auth_token, created_id)
+    get_check_meme_id_endpoint.check_status_code_endpoint(200)
+    get_check_meme_id_endpoint.check_id_is_correct(created_id)
 
 
 def test_get_check_meme_id_incorrect(auth_token, created_id, get_check_meme_id_endpoint):
-    status_code = get_check_meme_id_endpoint.check_meme_id(auth_token, 0)
-    get_check_meme_id_endpoint.check_status_code_endpoint(status_code, 404)
+    get_check_meme_id_endpoint.check_meme_id(auth_token, 0)
+    get_check_meme_id_endpoint.check_status_code_endpoint(404)
 
 
 def test_post_create_meme_valid(auth_token, post_create_meme_endpoint):
     result = post_create_meme_endpoint.create_meme_valid(auth_token)
     assert 'id' in result and result["id"] > 0
+    assert 'info' in result
+    assert 'tags' in result
+    assert 'text' in result
+    assert 'url' in result
     print(result)
 
 
@@ -73,8 +79,8 @@ def test_post_create_meme_valid(auth_token, post_create_meme_endpoint):
     )
 ])
 def test_post_create_meme_without_fields(auth_token, post_create_meme_endpoint, test_data, name_field):
-    status_code = post_create_meme_endpoint.create_meme_valid(auth_token, test_data)
-    post_create_meme_endpoint.check_status_code_endpoint(status_code, 400)
+    post_create_meme_endpoint.create_meme_valid(auth_token, test_data)
+    post_create_meme_endpoint.check_status_code_endpoint(400)
 
 
 def test_put_update_meme_valid(auth_token, put_update_meme_endpoint, created_id):
@@ -86,9 +92,14 @@ def test_put_update_meme_valid(auth_token, put_update_meme_endpoint, created_id)
         "info": {"author": "it's me", "color": "black"}
     }
 
-    result = put_update_meme_endpoint.put_update_meme(auth_token, created_id, update_data)
-    assert result.status_code == 200
-    assert update_data['id'] == created_id
+    put_update_meme_endpoint.put_update_meme(auth_token, created_id, update_data)
+    put_update_meme_endpoint.check_status_code_endpoint(200)
+    put_update_meme_endpoint.check_id_is_correct(created_id)
+    updated_meme = put_update_meme_endpoint.response.json()
+    assert updated_meme["text"] == update_data["text"]
+    assert updated_meme["url"] == update_data["url"]
+    assert updated_meme["tags"] == update_data["tags"]
+    assert updated_meme["info"] == update_data["info"]
 
 
 def test_put_update_meme_not_found(auth_token, put_update_meme_endpoint, created_id):
@@ -100,8 +111,8 @@ def test_put_update_meme_not_found(auth_token, put_update_meme_endpoint, created
         "info": {"author": "it's me", "color": "black"}
     }
 
-    result = put_update_meme_endpoint.put_update_meme(auth_token, created_id, update_data)
-    assert result.status_code == 400
+    put_update_meme_endpoint.put_update_meme(auth_token, created_id, update_data)
+    put_update_meme_endpoint.check_status_code_endpoint(400)
 
 
 def test_put_update_meme_method_without_field(auth_token, put_update_meme_endpoint, created_id):
@@ -112,24 +123,19 @@ def test_put_update_meme_method_without_field(auth_token, put_update_meme_endpoi
         "info": {"author": "it's me", "color": "black"}
     }
 
-    result = put_update_meme_endpoint.put_update_meme(auth_token, created_id, update_data)
-    assert result.status_code == 400
-
-
-def test_post_create_meme_id(created_id):
-    assert created_id > 0
-    print(f'Id is created - {created_id}')
+    put_update_meme_endpoint.put_update_meme(auth_token, created_id, update_data)
+    put_update_meme_endpoint.check_status_code_endpoint(400)
 
 
 def test_delete_meme_valid(auth_token, delete_meme_endpoint, created_id):
     check = CheckMemeId()
-
-    meme_data = check.check_meme_id(auth_token, created_id)
-    assert meme_data is not None
-    status_code = delete_meme_endpoint.delete_meme(auth_token, created_id)
-    delete_meme_endpoint.check_status_code_endpoint(status_code, 200)
+    check.check_meme_id(auth_token, created_id)
+    check.check_status_code_endpoint(200)
+    assert check.response.json() is not None
+    delete_meme_endpoint.delete_meme(auth_token, created_id)
+    delete_meme_endpoint.check_status_code_endpoint(200)
 
 
 def test_delete_meme_invalid(auth_token, delete_meme_endpoint):
-    status_code = delete_meme_endpoint.delete_meme(auth_token)
-    delete_meme_endpoint.check_status_code_endpoint(status_code, 404)
+    delete_meme_endpoint.delete_meme(auth_token)
+    delete_meme_endpoint.check_status_code_endpoint(404)

@@ -11,4 +11,5 @@ class PutUpdateMeme(BaseEndpointApi):
             headers={"Authorization": token},
             json=update_data
         )
+        self.status_code = self.response.status_code
         return self.response

@@ -7,5 +7,6 @@ class CheckMeme(BaseEndpointApi):
     def check_meme(self, token=None):
         url = f"{self.url}/meme"
         headers = {"Authorization": token}
-        response = requests.get(url, headers=headers)
-        return response.status_code
+        self.response = requests.get(url, headers=headers)
+        self.status_code = self.response.status_code
+        return self.response.status_code

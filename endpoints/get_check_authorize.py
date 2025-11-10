@@ -6,11 +6,12 @@ class CheckAuthorize(BaseEndpointApi):
 
     def authorize(self):
         url = f"{self.url}/authorize"
-        response = requests.post(url, json={"name": "Sergey_K"})
-        response.raise_for_status()
-        return response.json()
+        self.response = requests.post(url, json={"name": "Sergey_K"})
+        self.status_code = self.response.status_code
+        return self.response.json()
 
     def check_authorize(self, token: str):
         url = f"{self.url}/authorize/{token}"
-        response = requests.get(url)
-        return response.status_code
+        self.response = requests.get(url)
+        self.status_code = self.response.status_code
+        return self.response.status_code
