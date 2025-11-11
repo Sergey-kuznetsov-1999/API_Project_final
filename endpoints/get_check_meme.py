@@ -10,3 +10,7 @@ class CheckMeme(BaseEndpointApi):
         self.response = requests.get(url, headers=headers)
         self.status_code = self.response.status_code
         return self.response.status_code
+
+    def check_response_not_empty(self):
+        response_data = self.response.json()
+        assert response_data is not None
