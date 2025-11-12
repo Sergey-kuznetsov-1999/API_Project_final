@@ -14,14 +14,6 @@ class BaseEndpointApi:
         actual_id = response_data['id']
         assert int(actual_id) == int(expected_id), f"Expected ID {expected_id}, but got {actual_id}"
 
-    def check_meme_created(self):
-        response_data = self.response.json()
-        assert 'id' in response_data and int(response_data["id"]) > 0
-        assert 'info' in response_data
-        assert 'tags' in response_data
-        assert 'text' in response_data
-        assert 'url' in response_data
-
     def check_meme_same_created(self, update_data):
         updated_meme = self.response.json()
         assert updated_meme["text"] == update_data["text"]
